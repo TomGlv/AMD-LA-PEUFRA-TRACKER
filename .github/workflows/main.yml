@@ -1,0 +1,32 @@
+name: AMD Daily Check
+
+on:
+  schedule:
+    # 08:00 UTC = 10:00 Heure de Paris (Matin)
+    # 19:00 UTC = 21:00 Heure de Paris (Soir)
+    - cron: '0 8,19 * * *'
+  
+  # Permet de lancer le bot manuellement depuis l'onglet Actions
+  workflow_dispatch:
+
+jobs:
+  check-amd:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run Tracker
+        env:
+          RIOT_API_KEY: ${{ secrets.RIOT_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python bot.py
